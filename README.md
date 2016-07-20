@@ -2,30 +2,34 @@
 
 A [nyaa.se](https://www.nyaa.se/) API wrapper for NodeJS.
 
-# Usage
+## Usage
 
-```javascript
-// Import the API wrapper.
-import NyaaAPI from "nyaa-api-pt";
+#### Setup
+```
+npm install --save nyaa-api-pt
+```
+
+#### Initialize
+```js
+const NyaaAPI = require("nyaa-api-pt");
 
 // Create an instance of the API wrapper.
 const nyaa = new NyaaAPI();
+```
 
-// Make a search request to nyaa.se.
+#### Search
+```js
 nyaa.search({
+  term: "bakemonogatari",
   filter: "trusted_only",
   category: "anime",
-  sub_category: "english_translated",
-  term: "bakemonogatari"
-})
-  .then(res => console.log(res))
+  sub_category: "english_translated"
+}).then(res => console.log(res))
   .catch(err => console.error(err));
 ```
 
-# output
-
-**Example output:**
-```javascript
+## Output
+```js
 [
   {
     "category": "Anime",

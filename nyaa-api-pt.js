@@ -1,7 +1,16 @@
-export default class Searcher {
+const cheerio = require("cheerio");
+const req = require("request");
 
-  constructor(helper) {
-    this.helper = helper;
+const defaultOptions = {
+  "baseUrl": "https://www.nyaa.se/",
+  "timeout": 3 * 1000
+};
+
+module.exports = class NyaaAPI {
+
+  constructor(options = defaultOptions, debug = false) {
+    this.request = req.defaults(options);
+    this.debug = debug;
 
     this.categories = {
       anime: {
@@ -60,6 +69,23 @@ export default class Searcher {
     };
   };
 
+  get(qs, retry = true) {
+    if (this.debug) console.warn(`Making request with parameters: ${qs}`);
+    return new Promise((resolve, reject) => {
+      this.request({ uri: "", qs }, (err, res, body) => {
+        if (err && retry) {
+          return resolve(this.get(qs, false));
+        } else if (err) {
+          return reject(err);
+        } else if (!body || res.statusCode >= 400) {
+          return reject(new Error(`No data found, statuscode: ${res.statusCode}`))
+        } else {
+          return resolve(cheerio.load(body));
+        }
+      });
+    });
+  };
+
   requestData({ filter, category, sub_category, term }) {
     if (filter && !this.filters[filter]) return new Error(`${filter} is an invalid option for filter!`);
     if (category && !this.categories[category]) return new Error(`${category} is an invalid option for category!`);
@@ -82,7 +108,7 @@ export default class Searcher {
       qs.page = "search";
     }
 
-    return this.helper.get(qs);
+    return this.get(qs);
   };
 
   formatData($) {
@@ -95,11 +121,11 @@ export default class Searcher {
       const torrent_link = `https:${$(this).find("td.tlistname").find("a").attr("href")}`;
       const download_link = `https:${$(this).find("td.tlistdownload").find("a").attr("href")}`;
       const size = $(this).find("td.tlistsize").text();
-      const seeders = $(this).find("td.tlistsn").text();
-      const leechers = $(this).find("td.tlistln").text();
-      const peers = seeders + leechers;
-      const downloads = $(this).find("td.tlistdn").text();
-      const messages = $(this).find("td.tlistmn").text();
+      const seeders = parseInt($(this).find("td.tlistsn").text(), 10);
+      const leechers = parseInt($(this).find("td.tlistln").text(), 10);
+      const peers = parseInt(seeders + leechers, 10);
+      const downloads = parseInt($(this).find("td.tlistdn").text(), 10);
+      const messages = parseInt($(this).find("td.tlistmn").text(), 10);
 
       torrents.push({ category, sub_category, torrent_name, torrent_link, download_link, size, seeders, leechers, peers, downloads, messages });
     });
@@ -107,10 +133,9 @@ export default class Searcher {
     return torrents;
   };
 
-  executeSearch({ filter, category, sub_category, term }) {
+  search({ filter, category, sub_category, term }) {
     return this.requestData({ filter, category, sub_category, term })
-      .then(data => this.formatData(data))
-      .catch(err => new Error(err));
+      .then(data => this.formatData(data));
   };
 
 };
