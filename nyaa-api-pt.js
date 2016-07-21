@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const req = require("request");
+const querystring = require("querystring");
 
 const defaultOptions = {
   "baseUrl": "https://www.nyaa.se/",
@@ -8,7 +9,7 @@ const defaultOptions = {
 
 module.exports = class NyaaAPI {
 
-  constructor(options = defaultOptions, debug = false) {
+  constructor({options = defaultOptions, debug = false} = {}) {
     this.request = req.defaults(options);
     this.debug = debug;
 
@@ -70,7 +71,7 @@ module.exports = class NyaaAPI {
   };
 
   get(qs, retry = true) {
-    if (this.debug) console.warn(`Making request with parameters: ${qs}`);
+    if (this.debug) console.warn(`Making request with parameters: ${querystring.stringify(qs)}`);
     return new Promise((resolve, reject) => {
       this.request({ uri: "", qs }, (err, res, body) => {
         if (err && retry) {
@@ -78,7 +79,7 @@ module.exports = class NyaaAPI {
         } else if (err) {
           return reject(err);
         } else if (!body || res.statusCode >= 400) {
-          return reject(new Error(`No data found, statuscode: ${res.statusCode}`))
+          return reject(new Error(`No data found for parameters: ${querystring.stringify(qs)}, statuscode: ${res.statusCode}`))
         } else {
           return resolve(cheerio.load(body));
         }

@@ -1,4 +1,8 @@
-# Nyaa API PT
+# nyaa-api-pt
+
+[![Build Status](https://travis-ci.org/ChrisAlderson/nyaa-api-pt.svg?branch=master)]()
+[![Dependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt)
+[![devDependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt/dev-status.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt#info=devDependencies)
 
 A [nyaa.se](https://www.nyaa.se/) API wrapper for NodeJS.
 
@@ -14,7 +18,7 @@ npm install --save nyaa-api-pt
 const NyaaAPI = require("nyaa-api-pt");
 
 // Create an instance of the API wrapper.
-const nyaa = new NyaaAPI();
+const nyaa = new NyaaAPI({[options, debug]});
 ```
 
 #### Search
