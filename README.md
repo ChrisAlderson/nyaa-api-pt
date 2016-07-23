@@ -17,7 +17,7 @@ npm install --save nyaa-api-pt
 ```js
 const NyaaAPI = require("nyaa-api-pt");
 
-// Create an instance of the API wrapper.
+// Options are the request default options.
 const nyaa = new NyaaAPI({[options, debug]});
 ```
 

@@ -87,7 +87,7 @@ module.exports = class NyaaAPI {
     });
   };
 
-  requestData({ filter, category, sub_category, term }) {
+  requestData({ filter, category, sub_category, term, user }) {
     if (filter && !this.filters[filter]) return new Error(`${filter} is an invalid option for filter!`);
     if (category && !this.categories[category]) return new Error(`${category} is an invalid option for category!`);
     if (!category && sub_category) return new Error(`is an invalid option for`);
@@ -95,7 +95,7 @@ module.exports = class NyaaAPI {
       return new Error(`${category} is an invalid option for category or ${sub_category} is an invalid option for sub_category!`);
 
     const qs = {
-      filter: this.filters[filter]
+      filter: this.filters[filter], user
     };
 
     if (category && sub_category) {
@@ -134,8 +134,8 @@ module.exports = class NyaaAPI {
     return torrents;
   };
 
-  search({ filter, category, sub_category, term }) {
-    return this.requestData({ filter, category, sub_category, term })
+  search({ filter, category, sub_category, term, user }) {
+    return this.requestData({ filter, category, sub_category, term, user })
       .then(data => this.formatData(data));
   };
 

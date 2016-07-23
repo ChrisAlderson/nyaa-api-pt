@@ -9,6 +9,7 @@ nyaa.search({
   term: "bakemonogatari",
   filter: "trusted_only",
   category: "anime",
-  sub_category: "english_translated"
+  sub_category: "english_translated",
+  user: 62260
 }).then(res => console.log(res))
   .catch(err => console.error(err));
