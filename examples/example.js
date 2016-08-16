@@ -13,3 +13,11 @@ nyaa.search({
   user: 62260
 }).then(res => console.log(res))
   .catch(err => console.error(err));
+
+  // nyaa.search({
+  //   filter: "trusted_only",
+  //   category: "anime",
+  //   sub_categories: "english_translated",
+  //   user: 76430
+  // }).then(res => console.log(res.total_pages))
+  //   .catch(err => console.error(err));

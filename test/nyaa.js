@@ -15,7 +15,7 @@ describe("Nyaa", () => {
       sub_category: "english_translated",
       user: 62260
     }).then(res => {
-      assert.isArray(res);
+      assert.isArray(res.results);
       done();
     }).catch(err => done(err));
   });

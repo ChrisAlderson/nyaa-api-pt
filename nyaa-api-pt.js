@@ -113,12 +113,23 @@ module.exports = class NyaaAPI {
   };
 
   formatData($) {
-    const torrents = [];
+    const link = $("div.rightpages").find("a.page.pagelink").last().attr("href");
+
+    let offset = 1;
+    if (link) {
+      const index = link.indexOf("?");
+      offset = querystring.parse(link.substring(index + 1, link.length)).offset;
+    }
+
+    const result = {
+      total_pages: offset,
+      results: []
+    };
 
     $("tr.tlistrow").each(function(element) {
       const category = $(this).find("td.tlisticon").find("a").attr("title").replace(/\>\>.*/g, "").replace(/\s+/g, "");
       const sub_category = $(this).find("td.tlisticon").find("a").attr("title").replace(/.*\>\>/g, "").replace(/\s+/g, "")
-      const torrent_name = $(this).find("td.tlistname").text();
+      const title = $(this).find("td.tlistname").text();
       const torrent_link = `https:${$(this).find("td.tlistname").find("a").attr("href")}`;
       const download_link = `https:${$(this).find("td.tlistdownload").find("a").attr("href")}`;
       const size = $(this).find("td.tlistsize").text();
@@ -128,10 +139,10 @@ module.exports = class NyaaAPI {
       const downloads = parseInt($(this).find("td.tlistdn").text(), 10);
       const messages = parseInt($(this).find("td.tlistmn").text(), 10);
 
-      torrents.push({ category, sub_category, torrent_name, torrent_link, download_link, size, seeders, leechers, peers, downloads, messages });
+      result.results.push({ category, sub_category, title, torrent_link, download_link, size, seeders, leechers, peers, downloads, messages });
     });
 
-    return torrents;
+    return result;
   };
 
   search({ filter, category, sub_category, term, user }) {
