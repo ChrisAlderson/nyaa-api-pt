@@ -19,7 +19,7 @@ module.exports = class NyaaAPI {
         sub_categories: {
           english_translated: "1_37",
           raw: "1_11",
-          Non_english_translated: "1_38",
+          non_english_translated: "1_38",
           anime_music_video: "1_32"
         }
       },
@@ -50,7 +50,7 @@ module.exports = class NyaaAPI {
         sub_categories: {
           english_translated: "5_19",
           raw: "5_20",
-          mon_english_translated: "5_21",
+          non_english_translated: "5_21",
           idol_promotional_video: "5_22"
         }
       },
@@ -87,26 +87,27 @@ module.exports = class NyaaAPI {
     });
   };
 
-  requestData({ filter, category, sub_category, term, user }) {
+  requestData({ filter, category, sub_category, term, user, offset }) {
     if (filter && !this.filters[filter]) return new Error(`${filter} is an invalid option for filter!`);
     if (category && !this.categories[category]) return new Error(`${category} is an invalid option for category!`);
     if (!category && sub_category) return new Error(`is an invalid option for`);
     if (category && sub_category && (!this.categories[category] || !this.categories[category].sub_categories[sub_category]))
       return new Error(`${category} is an invalid option for category or ${sub_category} is an invalid option for sub_category!`);
 
-    const qs = {
-      filter: this.filters[filter], user
-    };
+    const qs = {};
+    if (term) {
+      qs.term = term;
+      qs.page = "search";
+    }
+
+    if (filter) qs.filter = this.filters[filter];
+    if (user) qs.user = user;
+    if (offset) qs.offset = offset;
 
     if (category && sub_category) {
       qs.cats = this.categories[category].sub_categories[sub_category]
     } else if (category) {
       qs.cats = this.categories[category].category_id;
-    }
-
-    if (term) {
-      qs.term = term;
-      qs.page = "search";
     }
 
     return this.get(qs);
@@ -145,8 +146,8 @@ module.exports = class NyaaAPI {
     return result;
   };
 
-  search({ filter, category, sub_category, term, user }) {
-    return this.requestData({ filter, category, sub_category, term, user })
+  search({ filter, category, sub_category, term, user, offset }) {
+    return this.requestData({ filter, category, sub_category, term, user, offset })
       .then(data => this.formatData(data));
   };
 

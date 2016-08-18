@@ -2,22 +2,15 @@
 const NyaaAPI = require("../nyaa-api-pt");
 
 // Create an instance of the API wrapper.
-const nyaa = new NyaaAPI();
+const nyaa = new NyaaAPI({debug: true});
 
 // Make a search request to nyaa.se.
 nyaa.search({
-  term: "bakemonogatari",
+  term: "horriblesubs",
   filter: "trusted_only",
   category: "anime",
   sub_category: "english_translated",
-  user: 62260
+  user: 64513,
+  offset: 2
 }).then(res => console.log(res))
   .catch(err => console.error(err));
-
-  // nyaa.search({
-  //   filter: "trusted_only",
-  //   category: "anime",
-  //   sub_categories: "english_translated",
-  //   user: 76430
-  // }).then(res => console.log(res.total_pages))
-  //   .catch(err => console.error(err));

@@ -9,11 +9,12 @@ describe("Nyaa", () => {
 
   it("Should get results with a search", done => {
     nyaa.search({
-      term: "bakemonogatari",
+      term: "horriblesubs",
       filter: "trusted_only",
       category: "anime",
       sub_category: "english_translated",
-      user: 62260
+      user: 64513,
+      offset: 2
     }).then(res => {
       assert.isArray(res.results);
       done();

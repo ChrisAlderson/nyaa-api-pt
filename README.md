@@ -21,7 +21,8 @@ const NyaaAPI = require("nyaa-api-pt");
 const nyaa = new NyaaAPI({[options, debug]});
 ```
 
-#### Search
+#### Example usage
+
 ```js
 nyaa.search({
   term: "bakemonogatari",
@@ -51,6 +52,46 @@ nyaa.search({
   ...
 ]
 ```
+
+## Parameters
+
+These are the parameters available to search on [nyaa.se](https://nyaa.se/):
+```
+- filter              # Trusted uploader filter
+- category            # The category to filter
+- sub_category        # The sub category to filter
+- term                # A search term
+- user                # The id of the uploader
+- offset              # The page to search on
+```
+
+##### Categories & Sub-categories
+
+These are the categories and sub-categories:
+
+ - anime
+   - english_translated
+   - raw
+   - non_english_translated
+   - anime_music_video
+ - literature
+   - english_translated
+   - raw
+   - non_english_translated
+ - audio
+   - lossless
+   - lossy
+ - pictures
+   - photos
+   - graphics
+ - live_ation
+   - english_translated
+   - raw
+   - mon_english_translated
+   - idol_promotional_video
+ - software
+   - applications
+   - games
 
 # License
 
