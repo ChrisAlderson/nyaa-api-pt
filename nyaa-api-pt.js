@@ -131,8 +131,8 @@ module.exports = class NyaaAPI {
       const category = $(this).find("td.tlisticon").find("a").attr("title").replace(/\>\>.*/g, "").replace(/\s+/g, "");
       const sub_category = $(this).find("td.tlisticon").find("a").attr("title").replace(/.*\>\>/g, "").replace(/\s+/g, "")
       const title = $(this).find("td.tlistname").text();
-      const torrent_link = `https:${$(this).find("td.tlistname").find("a").attr("href")}`;
-      const download_link = `https:${$(this).find("td.tlistdownload").find("a").attr("href")}`;
+      const link = `https:${$(this).find("td.tlistname").find("a").attr("href")}`;
+      const torrent_link = `https:${$(this).find("td.tlistdownload").find("a").attr("href")}`;
       const size = $(this).find("td.tlistsize").text();
       const seeders = parseInt($(this).find("td.tlistsn").text(), 10);
       const leechers = parseInt($(this).find("td.tlistln").text(), 10);
@@ -140,7 +140,7 @@ module.exports = class NyaaAPI {
       const downloads = parseInt($(this).find("td.tlistdn").text(), 10);
       const messages = parseInt($(this).find("td.tlistmn").text(), 10);
 
-      result.results.push({ category, sub_category, title, torrent_link, download_link, size, seeders, leechers, peers, downloads, messages });
+      result.results.push({ category, sub_category, title, link, torrent_link, size, seeders, leechers, peers, downloads, messages });
     });
 
     return result;
