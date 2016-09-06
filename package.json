@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "description": "A nyaa.se API wrapper for NodeJS.",
   "dependencies": {
-    "cheerio": "^0.20.0",
+    "cheerio": "^0.22.0",
     "request": "^2.74.0"
   },
   "devDependencies": {
