@@ -15,7 +15,7 @@ npm install --save nyaa-api-pt
 
 #### Initialize
 ```js
-const NyaaAPI = require("nyaa-api-pt");
+const NyaaAPI = require('nyaa-api-pt');
 
 // Options are the request default options.
 const nyaa = new NyaaAPI({[options, debug]});
@@ -25,10 +25,10 @@ const nyaa = new NyaaAPI({[options, debug]});
 
 ```js
 nyaa.search({
-  term: "bakemonogatari",
-  filter: "trusted_only",
-  category: "anime",
-  sub_category: "english_translated"
+  term: 'bakemonogatari',
+  filter: 'trusted_only',
+  category: 'anime',
+  sub_category: 'english_translated'
 }).then(res => console.log(res))
   .catch(err => console.error(err));
 ```
@@ -37,17 +37,17 @@ nyaa.search({
 ```js
 [
   {
-    "category": "Anime",
-    "sub_category": "English-translated",
-    "torrent_name": "[Coalgirls]_Bakemonogatari_v3.1_(1920x1080_Blu-ray_FLAC)",
-    "torrent_link": "https://www.nyaa.se/?page=view&tid=759691",
-    "download_link": "https://www.nyaa.se/?page=download&tid=759691",
-    "size": "17.82 GiB",
-    "seeders": "30",
-    "leechers": "11",
-    "peers": "3011",
-    "downloads": "11057",
-    "messages": "0"
+    category: 'Anime',
+    sub_category: 'English-translated',
+    torrent_name: '[Coalgirls]_Bakemonogatari_v3.1_(1920x1080_Blu-ray_FLAC)',
+    torrent_link: 'https://www.nyaa.se/?page=view&tid=759691',
+    download_link: 'https://www.nyaa.se/?page=download&tid=759691',
+    size: '17.82 GiB',
+    seeders: '30',
+    leechers: '11',
+    peers: '3011',
+    downloads: '11057',
+    messages: '0'
   },
   ...
 ]
