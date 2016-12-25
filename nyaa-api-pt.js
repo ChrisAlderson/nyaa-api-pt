@@ -70,7 +70,7 @@ module.exports = class NyaaAPI {
       trusted_only: 2,
       a_only: 3
     };
-  };
+  }
 
   _get(qs, retry = true) {
     if (this._debug) console.warn(`Making request with parameters: ${querystring.stringify(qs)}`);
@@ -87,7 +87,7 @@ module.exports = class NyaaAPI {
         }
       });
     });
-  };
+  }
 
   _requestData({ filter, category, sub_category, term, user, offset }) {
     if (filter && !this._filters[filter]) return new Error(`${filter} is an invalid option for filter!`);
@@ -113,7 +113,7 @@ module.exports = class NyaaAPI {
     }
 
     return this._get(qs);
-  };
+  }
 
   _formatData($) {
     const link = $('div.rightpages').find('a.page.pagelink').last().attr('href');
@@ -146,11 +146,11 @@ module.exports = class NyaaAPI {
     });
 
     return result;
-  };
+  }
 
   search({ filter, category, sub_category, term, user, offset }) {
     return this._requestData({ filter, category, sub_category, term, user, offset })
       .then(data => this._formatData(data));
-  };
+  }
 
-};
+}
