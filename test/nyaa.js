@@ -1,3 +1,5 @@
+'use strict';
+
 const chai = require('chai');
 const assert = chai.assert;
 const NyaaAPI = require('../nyaa-api-pt');

@@ -1,3 +1,5 @@
+'use strict';
+
 // Import the API wrapper.
 const NyaaAPI = require('../nyaa-api-pt');
 
