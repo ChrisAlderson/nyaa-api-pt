@@ -1,8 +1,8 @@
 'use strict';
 
 const cheerio = require('cheerio');
-const req = require('request');
 const querystring = require('querystring');
+const request = require('request');
 
 const defaultOptions = {
   'baseUrl': 'https://www.nyaa.se/',
@@ -12,7 +12,7 @@ const defaultOptions = {
 module.exports = class NyaaAPI {
 
   constructor({options = defaultOptions, debug = false} = {}) {
-    this._request = req.defaults(options);
+    this._request = request.defaults(options);
     this._debug = debug;
 
     this._categories = {
