@@ -12,10 +12,10 @@ const defaultOptions = {
 module.exports = class NyaaAPI {
 
   constructor({options = defaultOptions, debug = false} = {}) {
-    this.request = req.defaults(options);
-    this.debug = debug;
+    this._request = req.defaults(options);
+    this._debug = debug;
 
-    this.categories = {
+    this._categories = {
       anime: {
         category_id: '1_0',
         sub_categories: {
@@ -65,19 +65,19 @@ module.exports = class NyaaAPI {
       }
     };
 
-    this.filters = {
+    this._filters = {
       filter_remakes: 1,
       trusted_only: 2,
       a_only: 3
     };
   };
 
-  get(qs, retry = true) {
-    if (this.debug) console.warn(`Making request with parameters: ${querystring.stringify(qs)}`);
+  _get(qs, retry = true) {
+    if (this._debug) console.warn(`Making request with parameters: ${querystring.stringify(qs)}`);
     return new Promise((resolve, reject) => {
-      this.request({ uri: '', qs }, (err, res, body) => {
+      this._request({ uri: '', qs }, (err, res, body) => {
         if (err && retry) {
-          return resolve(this.get(qs, false));
+          return resolve(this._get(qs, false));
         } else if (err) {
           return reject(err);
         } else if (!body || res.statusCode >= 400) {
@@ -89,11 +89,11 @@ module.exports = class NyaaAPI {
     });
   };
 
-  requestData({ filter, category, sub_category, term, user, offset }) {
-    if (filter && !this.filters[filter]) return new Error(`${filter} is an invalid option for filter!`);
-    if (category && !this.categories[category]) return new Error(`${category} is an invalid option for category!`);
+  _requestData({ filter, category, sub_category, term, user, offset }) {
+    if (filter && !this._filters[filter]) return new Error(`${filter} is an invalid option for filter!`);
+    if (category && !this._categories[category]) return new Error(`${category} is an invalid option for category!`);
     if (!category && sub_category) return new Error(`is an invalid option for`);
-    if (category && sub_category && (!this.categories[category] || !this.categories[category].sub_categories[sub_category]))
+    if (category && sub_category && (!this._categories[category] || !this._categories[category].sub_categories[sub_category]))
       return new Error(`${category} is an invalid option for category or ${sub_category} is an invalid option for sub_category!`);
 
     const qs = {};
@@ -102,20 +102,20 @@ module.exports = class NyaaAPI {
       qs.page = 'search';
     }
 
-    if (filter) qs.filter = this.filters[filter];
+    if (filter) qs.filter = this._filters[filter];
     if (user) qs.user = user;
     if (offset) qs.offset = offset;
 
     if (category && sub_category) {
-      qs.cats = this.categories[category].sub_categories[sub_category]
+      qs.cats = this._categories[category].sub_categories[sub_category]
     } else if (category) {
-      qs.cats = this.categories[category].category_id;
+      qs.cats = this._categories[category].category_id;
     }
 
-    return this.get(qs);
+    return this._get(qs);
   };
 
-  formatData($) {
+  _formatData($) {
     const link = $('div.rightpages').find('a.page.pagelink').last().attr('href');
 
     let offset = 1;
@@ -149,8 +149,8 @@ module.exports = class NyaaAPI {
   };
 
   search({ filter, category, sub_category, term, user, offset }) {
-    return this.requestData({ filter, category, sub_category, term, user, offset })
-      .then(data => this.formatData(data));
+    return this._requestData({ filter, category, sub_category, term, user, offset })
+      .then(data => this._formatData(data));
   };
 
 };
