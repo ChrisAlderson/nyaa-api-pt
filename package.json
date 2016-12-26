@@ -1,6 +1,6 @@
 {
   "name": "nyaa-api-pt",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A nyaa.se API wrapper for NodeJS.",
   "dependencies": {
     "cheerio": "^0.22.0",
