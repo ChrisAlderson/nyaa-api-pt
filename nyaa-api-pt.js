@@ -47,7 +47,7 @@ module.exports = class NyaaAPI {
           graphics: '4_18'
         }
       },
-      live_ation: {
+      live_action: {
         category_id: '5_0',
         sub_categories: {
           english_translated: '5_19',

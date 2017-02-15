@@ -84,7 +84,7 @@ These are the categories and sub-categories:
  - pictures
    - photos
    - graphics
- - live_ation
+ - live_action
    - english_translated
    - raw
    - mon_english_translated
