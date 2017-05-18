@@ -25,32 +25,36 @@ const nyaa = new NyaaAPI({[options, debug]});
 
 ```js
 nyaa.search({
-  term: 'bakemonogatari',
+  query: 'horriblesubs',
   filter: 'trusted_only',
   category: 'anime',
-  sub_category: 'english_translated'
+  sub_category: 'english_translated',
+  page: 2,
+  sort: 'date',
+  order: 'asc'
 }).then(res => console.log(res))
   .catch(err => console.error(err));
 ```
 
 ## Output
 ```js
-[
-  {
-    category: 'Anime',
-    sub_category: 'English-translated',
-    torrent_name: '[Coalgirls]_Bakemonogatari_v3.1_(1920x1080_Blu-ray_FLAC)',
-    torrent_link: 'https://www.nyaa.se/?page=view&tid=759691',
-    download_link: 'https://www.nyaa.se/?page=download&tid=759691',
-    size: '17.82 GiB',
-    seeders: '30',
-    leechers: '11',
-    peers: '3011',
-    downloads: '11057',
-    messages: '0'
-  },
+{
+  total_pages: 1,
+  results: [
+    {
+      title: '[HorribleSubs] Twin Angel BREAK - 06 [720p].mkv',
+      link: 'https://nyaa.si/view/923089',
+      torrent_link: 'https://nyaa.si/view/923089/torrent',
+      magnet: 'magnet:?xt=urn:btih:RCIEYLUB5CNMY7EHB2T7E5KPMVG4YE54&dn=%5BHorribleSubs%5D+Twin+Angel+BREAK+-+06+%5B720p%5D.mkv&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Foscar.reyesleon.xyz%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.cyberia.is%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.doko.moe%3A6969&tr=http%3A%2F%2Ftracker.baka-sub.cf%3A80%2Fannounce',
+      size: '322.6 MiB',
+      seeders: 47,
+      leechers: 3,
+      peers: 50,
+      downloads: 703
+    }
+  ],
   ...
-]
+}
 ```
 
 ## Parameters
@@ -60,15 +64,17 @@ These are the parameters available to search on [nyaa.se](https://nyaa.se/):
 - filter              # Trusted uploader filter
 - category            # The category to filter
 - sub_category        # The sub category to filter
-- term                # A search term
-- user                # The id of the uploader
-- offset              # The page to search on
+- query               # A search term
+- page                # The page to search on
+- sort                # The property to sort on
+- order               # Oder ascending or descending.
 ```
 
 ##### Categories & Sub-categories
 
 These are the categories and sub-categories:
 
+ - all_categories
  - anime
    - english_translated
    - raw
@@ -97,7 +103,7 @@ These are the categories and sub-categories:
 
 MIT License
 
-Copyright (c) 2016 - nyaa-api-pt - Released under the MIT license.
+Copyright (c) 2017 - nyaa-api-pt - Released under the MIT license.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

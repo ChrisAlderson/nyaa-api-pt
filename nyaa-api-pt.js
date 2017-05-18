@@ -2,155 +2,190 @@
 
 const cheerio = require('cheerio');
 const querystring = require('querystring');
-const request = require('request');
-
-const defaultOptions = {
-  'baseUrl': 'https://www.nyaa.se/',
-  'timeout': 3 * 1000
-};
+const got = require('got');
 
 module.exports = class NyaaAPI {
 
-  constructor({options = defaultOptions, debug = false} = {}) {
-    this._request = request.defaults(options);
+  constructor({baseUrl = 'https://nyaa.si', debug = false} = {}) {
+    NyaaAPI._baseUrl = baseUrl;
     this._debug = debug;
 
     this._categories = {
+      all_categories: {
+        category_id: '0_0'
+      },
       anime: {
         category_id: '1_0',
         sub_categories: {
-          english_translated: '1_37',
-          raw: '1_11',
-          non_english_translated: '1_38',
-          anime_music_video: '1_32'
-        }
-      },
-      literature: {
-        category_id: '2_0',
-        sub_categories: {
-          english_translated: '2_12',
-          raw: '2_13',
-          non_english_translated: '2_39'
+          anime_music_video: '1_1',
+          english_translated: '1_2',
+          non_english_translated: '1_3',
+          raw: '1_4'
         }
       },
       audio: {
-        category_id: '3_0',
+        category_id: '2_0',
         sub_cats: {
-          lossless: '3_14',
-          lossy: '3_15'
+          lossless: '2_1',
+          lossy: '2_2'
         }
       },
-      pictures: {
-        category_id: '4_0',
+      literature: {
+        category_id: '3_0',
         sub_categories: {
-          photos: '4_17',
-          graphics: '4_18'
+          english_translated: '3_1',
+          non_english_translated: '3_2',
+          raw: '3_3'
         }
       },
       live_action: {
+        category_id: '4_0',
+        sub_categories: {
+          english_translated: '4_1',
+          idol_promotional_video: '4_2',
+          non_english_translated: '4_3',
+          raw: '4_4',
+        }
+      },
+      pictures: {
         category_id: '5_0',
         sub_categories: {
-          english_translated: '5_19',
-          raw: '5_20',
-          non_english_translated: '5_21',
-          idol_promotional_video: '5_22'
+          graphics: '5_1',
+          photos: '5_2'
         }
       },
       software: {
         category_id: '6_0',
         sub_categories: {
-          applications: '6_23',
-          games: '6_24'
+          applications: '6_1',
+          games: '6_2'
         }
       }
     };
 
     this._filters = {
+      no_filter: 0,
       filter_remakes: 1,
       trusted_only: 2,
       a_only: 3
     };
+
+    this._sorters = {
+      size: 'size',
+      date: 'id',
+      seeders: 'seeders',
+      leechers: 'leechers',
+      downloads: 'downloads'
+    };
+    this._orders = {
+      asc: 'asc',
+      desc: 'desc'
+    };
   }
 
-  _get(qs, retry = true) {
-    if (this._debug) console.warn(`Making request with parameters: ${querystring.stringify(qs)}`);
-    return new Promise((resolve, reject) => {
-      this._request({ uri: '', qs }, (err, res, body) => {
-        if (err && retry) {
-          return resolve(this._get(qs, false));
-        } else if (err) {
-          return reject(err);
-        } else if (!body || res.statusCode >= 400) {
-          return reject(new Error(`No data found for parameters: ${querystring.stringify(qs)}, statuscode: ${res.statusCode}`))
-        } else {
-          return resolve(cheerio.load(body));
-        }
-      });
-    });
+  _get(data = {}) {
+    if (this._debug)
+      console.warn(`Making request to: '${NyaaAPI._baseUrl}', opts: ${querystring.stringify(data)}`);
+
+    return got(NyaaAPI._baseUrl, {
+      method: 'GET',
+      query: data
+    }).then(({body}) => cheerio.load(body));
   }
 
-  _requestData({ filter, category, sub_category, term, user, offset }) {
-    if (filter && !this._filters[filter]) return new Error(`${filter} is an invalid option for filter!`);
-    if (category && !this._categories[category]) return new Error(`${category} is an invalid option for category!`);
-    if (!category && sub_category) return new Error(`is an invalid option for`);
+  _requestData({ filter = 'no_filter', category = 'all_categories', sub_category, query = '', page = 0, sort, order = 'desc' }) {
+    if (filter && !this._filters[filter])
+      throw new Error(`${filter} is an invalid option for filter!`);
+
+    if (category && !this._categories[category])
+      throw new Error(`${category} is an invalid option for category!`);
+
+    if (sort && !this._sorters[sort])
+      throw new Error(`${sort} is an invalid option for sort!`);
+
+    if (!category && sub_category)
+      throw new Error('Sub category needs a category!');
+
     if (category && sub_category && (!this._categories[category] || !this._categories[category].sub_categories[sub_category]))
-      return new Error(`${category} is an invalid option for category or ${sub_category} is an invalid option for sub_category!`);
+      throw new Error(`${category} is an invalid option for category or ${sub_category} is an invalid option for sub_category!`);
 
-    const qs = {};
-    if (term) {
-      qs.term = term;
-      qs.page = 'search';
-    }
-
-    if (filter) qs.filter = this._filters[filter];
-    if (user) qs.user = user;
-    if (offset) qs.offset = offset;
+    const qs = {
+      q: query,
+      f: this._filters[filter],
+      p: page,
+      s: this._sorters[sort],
+      o: order
+    };
 
     if (category && sub_category) {
-      qs.cats = this._categories[category].sub_categories[sub_category]
+      qs.c = this._categories[category].sub_categories[sub_category]
     } else if (category) {
-      qs.cats = this._categories[category].category_id;
+      qs.c = this._categories[category].category_id;
     }
 
     return this._get(qs);
   }
 
   _formatData($) {
-    const link = $('div.rightpages').find('a.page.pagelink').last().attr('href');
-
-    let offset = 1;
-    if (link) {
-      const index = link.indexOf('?');
-      offset = querystring.parse(link.substring(index + 1, link.length)).offset;
-    }
-
     const result = {
-      total_pages: offset,
+      /**
+       * TODO: Currently the site is limited to 1000 torrents (14 pages) when
+       * the query option is used. `total_pages` could be replaced with a
+       * `hasMore` property.
+       */
+      total_pages: 1,
       results: []
     };
 
-    $('tr.tlistrow').each(function(element) {
-      const category = $(this).find('td.tlisticon').find('a').attr('title').replace(/\>\>.*/g, '').replace(/\s+/g, '');
-      const sub_category = $(this).find('td.tlisticon').find('a').attr('title').replace(/.*\>\>/g, '').replace(/\s+/g, '')
-      const title = $(this).find('td.tlistname').text();
-      const link = `https:${$(this).find('td.tlistname').find('a').attr('href')}`;
-      const torrent_link = `https:${$(this).find('td.tlistdownload').find('a').attr('href')}`;
-      const size = $(this).find('td.tlistsize').text();
-      const seeders = parseInt($(this).find('td.tlistsn').text(), 10);
-      const leechers = parseInt($(this).find('td.tlistln').text(), 10);
-      const peers = parseInt(seeders + leechers, 10);
-      const downloads = parseInt($(this).find('td.tlistdn').text(), 10);
-      const messages = parseInt($(this).find('td.tlistmn').text(), 10);
+    $('tr.success').each(function(element) {
+      const entry = $(this).find('td');
 
-      result.results.push({ category, sub_category, title, link, torrent_link, size, seeders, leechers, peers, downloads, messages });
+      // TODO: add categories to results.
+      // const categoryRegex = /(\w+)\s+-\s+(.*)/;
+      // const completeCategory = entry.eq(0).find('a')
+                                                // .attr('title');
+      // const category = completeCategory.match(categoryRegex)[1];
+      // const sub_category = completeCategory.match(categoryRegex)[2];
+
+      const title = entry.eq(1).find('a').text();
+      const link = `${NyaaAPI._baseUrl}${entry.eq(1).find('a').attr('href')}`;
+      const torrent_link = `${NyaaAPI._baseUrl}${entry.eq(2).find('a').eq(0).attr('href')}`;
+      const magnet = entry.eq(2).find('a').eq(1).attr('href');
+      const size = entry.eq(3).text();
+      const date = new Date(entry.eq(4).text());
+      const seeders = parseInt(entry.eq(5).text(), 10);
+      const leechers = parseInt(entry.eq(6).text(), 10);
+      const peers = seeders + leechers;
+      const downloads = parseInt(entry.eq(7).text(), 10);
+
+      result.results.push({
+        // category,
+        // sub_category,
+        title,
+        link,
+        torrent_link,
+        magnet,
+        size,
+        seeders,
+        leechers,
+        peers,
+        downloads
+      });
     });
 
     return result;
   }
 
-  search({ filter, category, sub_category, term, user, offset }) {
-    return this._requestData({ filter, category, sub_category, term, user, offset })
-      .then(data => this._formatData(data));
+  search({ filter, category, sub_category, query, page, sort, order }) {
+    return this._requestData({
+      filter,
+      category,
+      sub_category,
+      query,
+      page,
+      sort,
+      order
+    }).then(this._formatData);
   }
 
 }

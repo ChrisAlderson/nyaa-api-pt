@@ -8,11 +8,13 @@ const nyaa = new NyaaAPI({debug: true});
 
 // Make a search request to nyaa.se.
 nyaa.search({
-  term: 'horriblesubs',
+  query: 'horriblesubs',
   filter: 'trusted_only',
   category: 'anime',
   sub_category: 'english_translated',
-  user: 64513,
-  offset: 2
-}).then(res => console.log(res))
+  page: 2,
+  sort: 'date',
+  order: 'asc'
+})
+.then(res => console.log(res))
   .catch(err => console.error(err));
