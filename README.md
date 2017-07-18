@@ -4,7 +4,7 @@
 [![Dependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt)
 [![devDependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt/dev-status.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt#info=devDependencies)
 
-A [nyaa.se](https://www.nyaa.se/) API wrapper for NodeJS.
+A [nyaa.pantsu.cat](https://nyaa.pantsu.cat/) API wrapper for NodeJS.
 
 ## Usage
 
@@ -15,10 +15,10 @@ npm install --save nyaa-api-pt
 
 #### Initialize
 ```js
-const NyaaAPI = require('nyaa-api-pt');
+const NyaaAPI = require('nyaa-api-pt')
 
-// Options are the request default options.
-const nyaa = new NyaaAPI({[options, debug]});
+// baseUrl and debug are optional.
+const nyaa = new NyaaAPI({[baseUrl, debug]})
 ```
 
 #### Example usage
@@ -31,49 +31,43 @@ nyaa.search({
   sub_category: 'english_translated',
   page: 2,
   sort: 'date',
-  order: 'asc'
+  order: false,
+  max: 300,
+  userID: 14
 }).then(res => console.log(res))
-  .catch(err => console.error(err));
+  .catch(err => console.error(err))
 ```
 
-## Output
+Or
+
 ```js
-{
-  total_pages: 1,
-  results: [
-    {
-      title: '[HorribleSubs] Twin Angel BREAK - 06 [720p].mkv',
-      link: 'https://nyaa.si/view/923089',
-      torrent_link: 'https://nyaa.si/view/923089/torrent',
-      magnet: 'magnet:?xt=urn:btih:RCIEYLUB5CNMY7EHB2T7E5KPMVG4YE54&dn=%5BHorribleSubs%5D+Twin+Angel+BREAK+-+06+%5B720p%5D.mkv&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Foscar.reyesleon.xyz%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.cyberia.is%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.doko.moe%3A6969&tr=http%3A%2F%2Ftracker.baka-sub.cf%3A80%2Fannounce',
-      size: '322.6 MiB',
-      seeders: 47,
-      leechers: 3,
-      peers: 50,
-      downloads: 703
-    }
-  ],
-  ...
-}
+nyaa.get({
+  max: 50,
+  page: 1
+}).then(res => console.log(res))
+  .catch(err => console.error(err))
 ```
 
-## Parameters
+##### Parameters
 
-These are the parameters available to search on [nyaa.se](https://nyaa.se/):
+These are the parameters available to search on
+[nyaa.pantsu.cat](https://nyaa.pantsu.cat/):
 ```
-- filter              # Trusted uploader filter
-- category            # The category to filter
-- sub_category        # The sub category to filter
-- query               # A search term
-- page                # The page to search on
-- sort                # The property to sort on
-- order               # Oder ascending or descending.
+ - query              # A search term
+ - filter             # Trusted uploader filter
+ - category           # The category to filter
+ - sub_category       # The sub category to filter
+ - page               # The page to search on
+ - sort               # The property to sort on
+ - order              # Oder ascending or descending
+ - max                #
+ - userID             #
 ```
 
 ##### Categories & Sub-categories
 
 These are the categories and sub-categories:
-
+```
  - all_categories
  - anime
    - english_translated
@@ -98,6 +92,35 @@ These are the categories and sub-categories:
  - software
    - applications
    - games
+```
+
+##### Filters
+
+The available filter options:
+```
+ - show_all
+ - filter_remakes
+ - trusted_only
+ - a_only
+```
+
+##### Sorting
+
+The available sorting options:
+```
+ - name
+ - seeders
+ - downloads
+ - leechers
+ - date
+ - size
+```
+
+## Output
+
+```js
+TODO: add example output.
+```
 
 # License
 
