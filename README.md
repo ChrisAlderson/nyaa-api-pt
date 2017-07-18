@@ -1,6 +1,7 @@
 # nyaa-api-pt
 
 [![Build Status](https://travis-ci.org/ChrisAlderson/nyaa-api-pt.svg?branch=master)]()
+[![Coverage Status](https://coveralls.io/repos/github/ChrisAlderson/nyaa-api-pt/badge.svg?branch=2.0.0-alpha.0)](https://coveralls.io/github/ChrisAlderson/nyaa-api-pt?branch=2.0.0-alpha.0)
 [![Dependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt)
 [![devDependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt/dev-status.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt#info=devDependencies)
 
