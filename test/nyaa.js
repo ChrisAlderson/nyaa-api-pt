@@ -128,14 +128,27 @@ describe('NyaaApi', () => {
     done()
   })
 
-  /** @test {NyaaApi#search} */
-  it('should search for torrents', done => {
+  //** @test {NyaaApi#search} */
+  it('should search for torrents with sort as a string', done => {
     nyaa.search({
       q: 'horriblesubs',
       page: 1,
       limit: 50,
       sort: 'id'
     }).then(res => {
+      expect(res).to.be.an('object')
+      expect(res.torrents).to.be.an('array')
+
+      const random = Math.floor(Math.random() * res.torrents.length)
+      testTorrentAttributes(res.torrents[random])
+
+      done()
+    }).catch(done)
+  })
+
+  /** @test {NyaaApi#search} */
+  it('should search for torrents without parameters', done => {
+    nyaa.search().then(res => {
       expect(res).to.be.an('object')
       expect(res.torrents).to.be.an('array')
 

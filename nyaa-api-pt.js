@@ -87,7 +87,7 @@ module.exports = class NyaaApi {
     baseUrl = 'https://nyaa.pantsu.cat/',
     apiToken,
     debug = false
-  } = {}) {
+  }) {
     /**
      * The base url of nyaa.pantsu.
      * @type {string}
