@@ -128,7 +128,7 @@ describe('NyaaApi', () => {
     done()
   })
 
-  //** @test {NyaaApi#search} */
+  /** @test {NyaaApi#search} */
   it('should search for torrents with sort as a string', done => {
     nyaa.search({
       q: 'horriblesubs',
