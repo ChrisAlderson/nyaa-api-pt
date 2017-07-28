@@ -20,7 +20,6 @@ describe('NyaaApi', () => {
     // Disable the warn logging function to testing.
     console.warn = () => {}
 
-    // TODO: add apiToken to encrypted env variables.
     nyaa = new NyaaApi({
       apiToken: process.env.NYAA_TOKEN,
       debug: true
@@ -149,7 +148,6 @@ describe('NyaaApi', () => {
 
   /** @test {NyaaApi#login} */
   it('should login with a username and password', done => {
-    // TODO: add username and password to encrypted env variables.
     nyaa.login({
       username: process.env.NYAA_USER,
       password: process.env.NYAA_PASS
