@@ -143,7 +143,8 @@ module.exports = class NyaaApi {
       },
       json: true,
       form: true,
-      body: query
+      body: query,
+      query
     }).then(({body}) => body)
   }
 
