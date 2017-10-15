@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/ChrisAlderson/nyaa-api-pt.svg?branch=master)](https://travis-ci.org/ChrisAlderson/nyaa-api-pt)
 [![Coverage Status](https://coveralls.io/repos/github/ChrisAlderson/nyaa-api-pt/badge.svg?branch=master)](https://coveralls.io/github/ChrisAlderson/nyaa-api-pt?branch=master)
 [![Dependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt)
-[![devDependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt/dev-status.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt#info=devDependencies)
+[![devDependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt/dev-status.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt?type=dev)
 
 A [nyaa.pantsu.cat](https://nyaa.pantsu.cat/) API wrapper for NodeJS. For more
 documentation you can checkout the official documentation of the API
