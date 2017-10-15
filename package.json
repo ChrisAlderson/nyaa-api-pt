@@ -1,18 +1,24 @@
 {
   "name": "nyaa-api-pt",
-  "version": "2.0.0-alpha.0",
-  "description": "A nyaa.se API wrapper for NodeJS.",
+  "version": "2.0.0-alpha.2",
+  "description": "A nyaa.pantsu.cat API wrapper for NodeJS.",
   "dependencies": {
-    "cheerio": "^0.22.0",
-    "got": "^6.7.1"
+    "debug": "^3.1.0",
+    "got": "^7.1.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.4.1"
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.9.0",
+    "eslint-config-vixo": "^2.0.0",
+    "mocha": "^4.0.1",
+    "nyc": "^11.2.1"
   },
   "license": "MIT",
   "scripts": {
-    "test": "mocha --timeout 15000 --reporter spec"
+    "coveralls": "cat ./coverage/lcov.info | node ./node_modules/.bin/coveralls",
+    "lint": "./node_modules/.bin/eslint {examples,test}/** *.js",
+    "test": "./node_modules/.bin/nyc --reporter=text --reporter=lcov ./node_modules/.bin/mocha --timeout 15000 --exit --reporter spec test/**"
   },
   "engines": {
     "node": ">=6.3.0"
@@ -24,7 +30,7 @@
     "torrents",
     "api"
   ],
-  "main": "nyaa-api-pt.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ChrisAlderson/nyaa-api-pt.git"
