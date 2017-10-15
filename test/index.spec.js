@@ -1,15 +1,15 @@
-'use strict'
-
 // Import the necessary modules.
+/* eslint-disable no-unused-expressions */
 const { expect } = require('chai')
-const NyaaApi = require('../nyaa-api-pt')
+
+const NyaaApi = require('..')
 
 /** @test {NyaaApi} */
 describe('NyaaApi', () => {
   /**
- * The NyaaApi instance.
- * @type {NyaaApi}
- */
+   * The NyaaApi instance.
+   * @type {NyaaApi}
+   */
   let nyaa
 
   /**
@@ -17,12 +17,8 @@ describe('NyaaApi', () => {
    * @type {Function}
    */
   before(() => {
-    // Disable the warn logging function to testing.
-    console.warn = () => {}
-
     nyaa = new NyaaApi({
-      apiToken: process.env.NYAA_TOKEN,
-      debug: true
+      apiToken: process.env.NYAA_TOKEN
     })
   })
 
@@ -43,7 +39,6 @@ describe('NyaaApi', () => {
     expect(torrent.comments).to.be.an('array')
     expect(torrent.sub_category).to.be.a('string')
     expect(torrent.category).to.be.a('string')
-    expect(torrent.anidb_id).to.be.a('string')
     expect(torrent.uploader_id).to.be.a('number')
     expect(torrent.uploader_name).to.be.a('string')
     expect(torrent.uploader_old).to.be.a('string')
@@ -57,76 +52,6 @@ describe('NyaaApi', () => {
     expect(torrent.last_scrape).to.be.a('string')
     expect(torrent.file_list).to.be.an('array')
   }
-
-  /** @test {NyaaApi#getTorrent} */
-  it('should get a torrent', done => {
-    nyaa.getTorrent(962988).then(res => {
-      testTorrentAttributes(res)
-      done()
-    }).catch(done)
-  })
-
-  /** @test {NyaaApi#getTorrentHead} */
-  it('should get a torrent head', done => {
-    // TODO: fix this test.
-
-    // For branch coverage.
-    nyaa = new NyaaApi({
-      apiToken: process.env.NYAA_TOKEN
-    })
-    nyaa.getTorrentHead(962988).then(res => {
-      expect(res).to.be.a('string')
-      // testTorrentAttributes(res)
-      done()
-    }).catch(done)
-  })
-
-  /** @test {NyaaApi#uploadTorrent} */
-  it('should upload a torrent', done => {
-    // TODO: fix this test.
-
-    // nyaa.uploadTorrent({
-    //   username,
-    //   name,
-    //   magnet,
-    //   category,
-    //   remake,
-    //   description,
-    //   status,
-    //   hidden,
-    //   websiteLink,
-    //   languages,
-    //   torrent
-    // }).then(res => {
-    //   expect(res).to.be.an('object')
-    //   done()
-    // }).catch(done)
-
-    done()
-  })
-
-  /** @test {NyaaApi#updateTorrent} */
-  it('should update a torrent', done => {
-    // TODO: fix this test.
-
-    // nyaa.updateTorrent({
-    //   username: process.env.NYAA_USER,
-    //   id,
-    //   name: 'test torrent',
-    //   category: '3_5',
-    //   remake: true,
-    //   description: 'jist a test torrent',
-    //   status: 0,
-    //   hidden: 'tru',
-    //   // websiteLink,
-    //   languages: 'en'
-    // }).then(res => {
-    //   expect(res).to.be.an('object')
-    //   done()
-    // }).catch(done)
-
-    done()
-  })
 
   /** @test {NyaaApi#search} */
   it('should search for torrents with sort as a string', done => {
@@ -159,6 +84,61 @@ describe('NyaaApi', () => {
     }).catch(done)
   })
 
+  /** @test {NyaaApi#getTorrent} */
+  it('should get a torrent', done => {
+    nyaa.getTorrent(962988).then(res => {
+      testTorrentAttributes(res)
+      done()
+    }).catch(done)
+  })
+
+  /** @test {NyaaApi#getTorrentHead} */
+  it('should get a torrent head', done => {
+    nyaa.getTorrentHead(962988).then(res => {
+      expect(res).to.be.a('string')
+      done()
+    }).catch(done)
+  })
+
+  /** @test {NyaaApi#uploadTorrent} */
+  it.skip('should upload a torrent', done => {
+    nyaa.uploadTorrent({
+      // username,
+      // name,
+      // magnet,
+      // category,
+      // remake,
+      // description,
+      // status,
+      // hidden,
+      // websiteLink,
+      // languages,
+      // torrent
+    }).then(res => {
+      expect(res).to.be.an('object')
+      done()
+    }).catch(done)
+  })
+
+  /** @test {NyaaApi#updateTorrent} */
+  it.skip('should update a torrent', done => {
+    nyaa.updateTorrent({
+      username: process.env.NYAA_USER,
+      // id,
+      name: 'test torrent',
+      category: '3_5',
+      remake: true,
+      description: 'jist a test torrent',
+      status: 0,
+      hidden: 'tru',
+      // websiteLink,
+      languages: 'en'
+    }).then(res => {
+      expect(res).to.be.an('object')
+      done()
+    }).catch(done)
+  })
+
   /** @test {NyaaApi#login} */
   it('should login with a username and password', done => {
     nyaa.login({
@@ -166,7 +146,6 @@ describe('NyaaApi', () => {
       password: process.env.NYAA_PASS
     }).then(res => {
       expect(res).to.be.an('object')
-      // expect(res.infos).to.be.an('array')
       expect(res.ok).to.be.a('boolean')
 
       const { data } = res
@@ -187,7 +166,6 @@ describe('NyaaApi', () => {
   it('should get a profile by the id', done => {
     nyaa.getProfile(13803).then(res => {
       expect(res).to.be.an('object')
-      // expect(res.infos).to.be.an('array')
       expect(res.ok).to.be.a('boolean')
 
       const { data } = res
@@ -200,36 +178,6 @@ describe('NyaaApi', () => {
       expect(data.liking_count).to.be.an('number')
       expect(data.liked_count).to.be.an('number')
 
-      done()
-    }).catch(done)
-  })
-
-  // XXX: Endpoint is not on production yet.
-  // /** @test {NyaaApi#getUser} */
-  // it('should get a user of the api key', done => {
-  //   nyaa.getUser().then(res => {
-  //     expect(res).to.be.an('object')
-  //     done()
-  //   }).catch(done)
-  // })
-
-  /** @test {NyaaApi#refreshToken} */
-  it('should refresh the api token', done => {
-    //
-    nyaa.refreshToken().then(res => {
-      // TODO: fix this test.
-
-      expect(res).to.be.an('object')
-      done()
-    }).catch(done)
-  })
-
-  /** @test {NyaaApi#checkToken} */
-  it('should check the api token', done => {
-    // TODO: fix this test.
-
-    nyaa.checkToken().then(res => {
-      expect(res).to.be.an('object')
       done()
     }).catch(done)
   })

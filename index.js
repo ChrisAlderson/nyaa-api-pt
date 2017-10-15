@@ -1,8 +1,9 @@
-'use strict'
-
 // Import the necessary modules.
+const debug = require('debug')
 const got = require('got')
 const { stringify } = require('querystring')
+
+const { name } = require('./package')
 
 /**
  * The torrent model.
@@ -85,27 +86,23 @@ module.exports = class NyaaApi {
    */
   constructor({
     baseUrl = 'https://nyaa.pantsu.cat/',
-    apiToken,
-    debug = false
+    apiToken
   }) {
     /**
      * The base url of nyaa.pantsu.
      * @type {string}
      */
     this._baseUrl = baseUrl
-
     /**
      * Your API token.
      * @type {string}
      */
     this._apiToken = apiToken
-
     /**
      *  Show extra output.
      * @type {string}
      */
-    this._debug = debug
-
+    this._debug = debug(name)
     /**
      * The sorters for searching.
      * @type {Object}
@@ -132,9 +129,7 @@ module.exports = class NyaaApi {
   _request(method, endpoint, query) {
     const uri = `${this._baseUrl}${endpoint}`
 
-    if (this._debug) {
-      console.warn(`Making request to: '${uri}?${stringify(query)}'`)
-    }
+    this._debug(`Making request to: '${uri}?${stringify(query)}'`)
 
     return got(uri, {
       method,
@@ -172,7 +167,6 @@ module.exports = class NyaaApi {
 
   /**
    * Send a HTTP POST request to the API of nyaa.pantsu.
-   * @param {!string} method - The method of the of HTTP.
    * @param {!string} endpoint - The endpoint to send the POST request to.
    * @param {?Object} query - The query to send with the POST request.
    * @returns {Promise<Object, Error>} - The promise to send a HTTP POST
@@ -183,13 +177,78 @@ module.exports = class NyaaApi {
   }
 
   /**
-   * Send a HTTP PUT request to the API of nyaa.pantsu.
-   * @param {!string} endpoint - The endpoint to send the PUT request to.
-   * @param {?Object} query - The query to send with the PUT request.
-   * @returns {Promise<Object, Error>} - The promise to send a HTTP PUT request.
+   * Search for torrents.
+   * @param {!Object} config - The configuration for the method.
+   * @param {Array<string>} config.c - In which categories to search.
+   * @param {string} config.q - Query to search (torrent name).
+   * @param {number} config.page - Page of the search results.
+   * @param {string} config.limit - Number of results per page.
+   * @param {string} config.userID - Uploader ID owning the torrents.
+   * @param {string} config.fromID - Show results with torrents ID superior to
+   * this.
+   * @param {string} config.s - Torrent status.
+   * @param {string} config.maxage - Torrents which have been uploaded the last
+   * x days.
+   * @param {string} config.toDate - Torrents which have been uploaded since
+   * dateType.
+   * @param {string} config.fromDate - Torrents which have been uploaded the
+   * last dateType.
+   * @param {string} config.dateType - Which type of date (d for days, m for
+   * months, y for years).
+   * @param {string} config.minSize - Filter by minimal size in sizeType.
+   * @param {string} config.maxSize - Filter by maximal size in sizeType.
+   * @param {string} config.sizeType - Which type of size (b for bytes, k for
+   * kilobytes, m for megabytes, g for gigabytes).
+   * @param {string} config.sort - Torrent sorting type (0 = id, 1 = name,
+   * 2 = date, 3 = downloads, 4 = size, 5 = seeders, 6 = leechers,
+   * 7 = completed).
+   * @param {boolean} config.order - Order ascending or descending
+   * (true = ascending).
+   * @param {Array<string>} config.lang - Filter the languages.
+   * @param {number} config.page - Search page.
+   * @return {Promise<QueryResponse, Error>} - The promise to search for a list
+   * of torrents.
    */
-  _put(endpoint, query) {
-    return this._request('PUT', endpoint, query)
+  search({
+    c,
+    q,
+    page,
+    limit,
+    userID,
+    fromID,
+    s,
+    maxage,
+    toDate,
+    fromDate,
+    dateType,
+    minSize,
+    maxSize,
+    sizeType,
+    sort,
+    order,
+    lang
+  } = {}) {
+    const sortBy = typeof sort === 'string' ? this._sorters[sort] : ''
+
+    return this._get('api/search', {
+      c,
+      q,
+      page,
+      limit,
+      userID,
+      fromID,
+      s,
+      maxage,
+      toDate,
+      fromDate,
+      dateType,
+      minSize,
+      maxSize,
+      sizeType,
+      sort: sortBy,
+      order,
+      lang
+    })
   }
 
   /**
@@ -212,21 +271,22 @@ module.exports = class NyaaApi {
 
   /**
    * Upload a new torrent.
-   * @param {string} username - Torrent uploader name.
-   * @param {string} name - Torrent name.
-   * @param {string} magnet - Torrent magnet URI.
-   * @param {string} category - Torrent category.
-   * @param {boolean} remake - Torrent is a remake.
-   * @param {string} description - Torrent description.
-   * @param {number} status - Torrent status.
-   * @param {boolean} hidden - Torrent hidden.
-   * @param {string} websiteLink - Torrent website link.
-   * @param {Array<string>} languages - Torrent languages.
-   * @param {String} torrent - Torrent file to upload (you have to send a
-   * torrent file or a magnet, not both!).
-   * @returns {Promise<UploadUpdateResponse, Error} - The promise to upload a
+   * @param {!Object} config - The configuration for the method.
+   * @param {string} config.username - Torrent uploader name.
+   * @param {string} config.name - Torrent name.
+   * @param {string} config.magnet - Torrent magnet URI.
+   * @param {string} config.category - Torrent category.
+   * @param {boolean} config.remake - Torrent is a remake.
+   * @param {string} config.description - Torrent description.
+   * @param {number} config.status - Torrent status.
+   * @param {boolean} config.hidden - Torrent hidden.
+   * @param {string} config.websiteLink - Torrent website link.
+   * @param {Array<string>} config.languages - Torrent languages.
+   * @param {String} config.torrent - Torrent file to upload (you have to send
+   * a torrent file or a magnet, not both!).
+   * @returns {Promise<UploadUpdateResponse, Error>} - The promise to upload a
    * torrent.
-  */
+   */
   uploadTorrent({
     username,
     name,
@@ -258,19 +318,20 @@ module.exports = class NyaaApi {
 
   /**
    * Update an existing torrent.
-   * @param {string} username - Torrent uploader name.
-   * @param {number} id - Torrent ID.
-   * @param {string} name - Torrent name.
-   * @param {string} category - Torrent category.
-   * @param {boolean} remake - Torrent is a remake.
-   * @param {string} description - Torrent description.
-   * @param {number} status - Torrent status.
-   * @param {boolean} hidden - Torrent hidden.
-   * @param {string} websiteLink - Torrent website link.
-   * @param {Array<string>} languages - Torrent languages.
-   * @returns {Promise<UploadUpdateResponse, Error} - The promise to update a
+   * @param {!Object} config - The configuration for the method.
+   * @param {string} config.username - Torrent uploader name.
+   * @param {number} config.id - Torrent ID.
+   * @param {string} config.name - Torrent name.
+   * @param {string} config.category - Torrent category.
+   * @param {boolean} config.remake - Torrent is a remake.
+   * @param {string} config.description - Torrent description.
+   * @param {number} config.status - Torrent status.
+   * @param {boolean} config.hidden - Torrent hidden.
+   * @param {string} config.websiteLink - Torrent website link.
+   * @param {Array<string>} config.languages - Torrent languages.
+   * @returns {Promise<UploadUpdateResponse, Error>} - The promise to update a
    * torrent.
-  */
+   */
   updateTorrent({
     username,
     id,
@@ -284,7 +345,7 @@ module.exports = class NyaaApi {
     languages
   }) {
     // TODO: test this method.
-    return this._put('api/update', {
+    return this._post('api/update', {
       username,
       id,
       name,
@@ -295,79 +356,6 @@ module.exports = class NyaaApi {
       hidden,
       website_link: websiteLink,
       languages
-    })
-  }
-
-  /**
-   * Search for torrents.
-   * @param {Array<string>} c - In which categories to search.
-   * @param {string} q - Query to search (torrent name).
-   * @param {number} page - Page of the search results.
-   * @param {string} limit - Number of results per page.
-   * @param {string} userID - Uploader ID owning the torrents.
-   * @param {string} fromID - Show results with torrents ID superior to this.
-   * @param {string} s - Torrent status.
-   * @param {string} maxage - Torrents which have been uploaded the last x days.
-   * @param {string} toDate - Torrents which have been uploaded since x
-   * <code>dateType</code>.
-   * @param {string} fromDate - Torrents which have been uploaded the last x
-   * <code>dateType</code>.
-   * @param {string} dateType - Which type of date (<code>d</code> for days,
-   * <code>m</code> for months, <code>y</code> for years).
-   * @param {string} minSize - Filter by minimal size in <code>sizeType</code>.
-   * @param {string} maxSize - Filter by maximal size in <code>sizeType</code>.
-   * @param {string} sizeType - Which type of size (<code>b</code> for bytes,
-   * <code>k</code> for kilobytes, <code>m</code> for megabytes, <code>g</code>
-   * for gigabytes).
-   * @param {string} sort - Torrent sorting type (0 = id, 1 = name, 2 = date,
-   * 3 = downloads, 4 = size, 5 = seeders, 6 = leechers, 7 = completed).
-   * @param {boolean} order - Order ascending or descending (true = ascending).
-   * @param {Array<string>} lang - Filter the languages.
-   * @param {number} page - Search page.
-   * @return {Promise<QueryResponse, Error>} - The promise to search for a list
-   * of torrents.
-   */
-  search({
-    c,
-    q,
-    page,
-    limit,
-    userID,
-    fromID,
-    s,
-    maxage,
-    toDate,
-    fromDate,
-    dateType,
-    minSize,
-    maxSize,
-    sizeType,
-    sort,
-    order,
-    lang
-  } = {}) {
-    if (typeof sort === 'string') {
-      sort = this._sorters[sort]
-    }
-
-    return this._get('api/search', {
-      c,
-      q,
-      page,
-      limit,
-      userID,
-      fromID,
-      s,
-      maxage,
-      toDate,
-      fromDate,
-      dateType,
-      minSize,
-      maxSize,
-      sizeType,
-      sort,
-      order,
-      lang
     })
   }
 
@@ -388,35 +376,10 @@ module.exports = class NyaaApi {
   /**
    * Get a profile based on the given id.
    * @param {Number} id - User ID.
-   * @return {Promise<Profile, Error} - The promise ot get a profile.
+   * @return {Promise<Profile, Error>} - The promise ot get a profile.
    */
   getProfile(id) {
     return this._get(`api/profile`, { id })
-  }
-
-  // XXX: Endpoint is not on production yet.
-  // /**
-  //  * Get the current use of the api token.
-  //  * @return {Promise<Object, Error>} - The promise to get a user.
-  //  */
-  // getUser() {
-  //   return this._get(`api/user`)
-  // }
-
-  /**
-   * TODO: add description.
-   * @return {Promise<Object, Error>} - The promise to refresh the API token.
-   */
-  refreshToken() {
-    return this._get('api/token/refresh')
-  }
-
-  /**
-   * TODO: add description.
-   * @return {Promise<Object, Error>} - The promise to check the API token.
-   */
-  checkToken() {
-    return this._get('api/token/check')
   }
 
 }

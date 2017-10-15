@@ -1,11 +1,13 @@
 # nyaa-api-pt
 
 [![Build Status](https://travis-ci.org/ChrisAlderson/nyaa-api-pt.svg?branch=master)](https://travis-ci.org/ChrisAlderson/nyaa-api-pt)
-[![Coverage Status](https://coveralls.io/repos/github/ChrisAlderson/nyaa-api-pt/badge.svg?branch=2.0.0-alpha.0)](https://coveralls.io/github/ChrisAlderson/nyaa-api-pt?branch=2.0.0-alpha.0)
+[![Coverage Status](https://coveralls.io/repos/github/ChrisAlderson/nyaa-api-pt/badge.svg?branch=master)](https://coveralls.io/github/ChrisAlderson/nyaa-api-pt?branch=master)
 [![Dependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt)
 [![devDependency Status](https://david-dm.org/ChrisAlderson/nyaa-api-pt/dev-status.svg)](https://david-dm.org/ChrisAlderson/nyaa-api-pt#info=devDependencies)
 
-A [nyaa.pantsu.cat](https://nyaa.pantsu.cat/) API wrapper for NodeJS.
+A [nyaa.pantsu.cat](https://nyaa.pantsu.cat/) API wrapper for NodeJS. For more
+documentation you can checkout the official documentation of the API
+[here](https://nyaa.pantsu.cat/apidoc/).
 
 ## Usage
 
@@ -18,110 +20,21 @@ npm install --save nyaa-api-pt
 ```js
 const NyaaAPI = require('nyaa-api-pt')
 
-// baseUrl and debug are optional.
-const nyaa = new NyaaAPI({[baseUrl, debug]})
+const nyaa = new NyaaAPI({
+  baseUrl // The base url of nyaa. Default to 'https://nyaa.pantsu.cat/'.
+  apiToken // Your API token from nyaa.
+})
 ```
 
-#### Example usage
+#### Methods
 
-```js
-nyaa.search({
-  query: 'horriblesubs',
-  filter: 'trusted_only',
-  category: 'anime',
-  sub_category: 'english_translated',
-  page: 2,
-  sort: 'date',
-  order: false,
-  max: 300,
-  userID: 14
-}).then(res => console.log(res))
-  .catch(err => console.error(err))
-```
-
-Or
-
-```js
-nyaa.get({
-  max: 50,
-  page: 1
-}).then(res => console.log(res))
-  .catch(err => console.error(err))
-```
-
-##### Parameters
-
-These are the parameters available to search on
-[nyaa.pantsu.cat](https://nyaa.pantsu.cat/):
-```
- - query              # A search term
- - filter             # Trusted uploader filter
- - category           # The category to filter
- - sub_category       # The sub category to filter
- - page               # The page to search on
- - sort               # The property to sort on
- - order              # Oder ascending or descending
- - max                #
- - userID             #
-```
-
-##### Categories & Sub-categories
-
-These are the categories and sub-categories:
-```
- - all_categories
- - anime
-   - english_translated
-   - raw
-   - non_english_translated
-   - anime_music_video
- - literature
-   - english_translated
-   - raw
-   - non_english_translated
- - audio
-   - lossless
-   - lossy
- - pictures
-   - photos
-   - graphics
- - live_action
-   - english_translated
-   - raw
-   - mon_english_translated
-   - idol_promotional_video
- - software
-   - applications
-   - games
-```
-
-##### Filters
-
-The available filter options:
-```
- - show_all
- - filter_remakes
- - trusted_only
- - a_only
-```
-
-##### Sorting
-
-The available sorting options:
-```
- - name
- - seeders
- - downloads
- - leechers
- - date
- - size
-```
-
-## Output
-
-```js
-TODO: add example output.
-```
+ - search
+ - getTorrent
+ - getTorrentHead
+ - uploadTorrent
+ - updateTorrent
+ - login
+ - getProfile
 
 # License
 
